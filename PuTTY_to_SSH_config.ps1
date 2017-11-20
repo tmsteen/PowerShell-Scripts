@@ -1,12 +1,6 @@
 # PuTTY to SSH Config -- BASH For Windows
 # Author: Trevor Steen
 
-# TODO
-# Commanline option to write to file
-
-Param(
-   [switch]$ForwardAgent
-)
 
 # Registry path to PuTTY configured profiles
 $regPath = 'HKCU:\SOFTWARE\SimonTatham\PuTTY\Sessions'
@@ -62,10 +56,12 @@ Get-ChildItem $regPath -Name | ForEach-Object {
 
         }
 
+    # Parse if Forward Agent is required
+    $puttyAgent = (Get-ItemProperty -Path "$regPath\$_").AgentFwd
+    if ($puttyAgent -eq 1) { Write-Host "`tForwardAgent yes" }
+
     }
 
-    #Add Forward Agent if selected
-    if ($ForwardAgent) { Write-Host "`tForwardAgent yes" }
 
     Write-Host "`n"
 }
