@@ -16,6 +16,10 @@ Parse PuTTY profiles into an SSH Config compatible format
 This script parses the registry keys set by PuTTY to save profile configurations.  The applicable parameters are output to either STDOUT or a file that can be copied
 into an SSH config.  
 
+-SpaceChar -- Replace spaces in config names with this character (Default: -_
+-Append -- Set to append to "OutFile", if not set OutFile is overwritten if it exists
+-Prefix -- Replace C: with this string (Default: /mnt/c for use with Bash For Windows)
+
 .EXAMPLE
 .\PuTTY_to_SSH_config.ps1 -outfile test-in-console.txt -prefix /mnt/c/keyfiles
 
