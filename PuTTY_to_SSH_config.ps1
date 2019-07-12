@@ -75,6 +75,8 @@ if ($result -eq 0) { Remove-Item $OutFile }
 
 # Registry path to PuTTY configured profiles
 $regPath = 'HKCU:\SOFTWARE\SimonTatham\PuTTY\Sessions'
+# Uncomment this to export from Kitty
+# $regPath = 'HKCU:\SOFTWARE\9bis.com\KiTTY\Sessions'
 
 # Iterate over each PuTTY profile
 Get-ChildItem $regPath -Name | ForEach-Object {
@@ -111,8 +113,8 @@ Get-ChildItem $regPath -Name | ForEach-Object {
         # Parse Configured Tunnels
         $puttyTunnels = (Get-ItemProperty -Path "$regPath\$_").PortForwardings
         if ($puttyTunnels) {
-            $puttyTunnels.split() | ForEach-Object {
-
+            $tunnelLines = ""
+            $puttyTunnels.split(',') | ForEach-Object {
                 # First character denotes tunnel type
                 $tunnelType = $_.Substring(0,1)
                 # Digits follow tunnel type is local port
@@ -131,6 +133,7 @@ Get-ChildItem $regPath -Name | ForEach-Object {
                 ElseIf ($tunnelType -eq 'L') {
                     $tunnelLine = "`tLocalForward $tunnelPort $tunnelDest"
                 }
+                $tunnelLines = "$tunnelLines`n$tunnelLine"
 
             }
 
@@ -145,7 +148,7 @@ Get-ChildItem $regPath -Name | ForEach-Object {
         }
 
         # Build output string
-        $output = "$hostLine`n$hostnameLine`n$userLine`n$identityLine`n$tunnelLine`n$agentLine`n"
+        $output = "$hostLine`n$hostnameLine`n$userLine`n$identityLine`n$tunnelLines`n$agentLine`n"
 
         # Output to file if set, otherwise STDOUT
         if ($outfile) { $output | Out-File $outfile -Append}
